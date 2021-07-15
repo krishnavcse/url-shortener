@@ -7,9 +7,11 @@
 		<div class="col-9">
 	    	<h3>URL Detail Report</h3>
 	    </div>
-	    <div class="col-3" style="text-align: right;">
-	    	<a href="{{ url('url/create') }}" class="btn btn-primary">Create</a>
-	    </div>
+	   @if(($urlLimit > $urlCount) || ($urlLimit == 'unlimited'))
+		    <div class="col-3" style="text-align: right;">
+		    	<a href="{{ url('url/create') }}" class="btn btn-primary">Create</a>
+		    </div>
+	    @endif
 	</div>
     <br>
 

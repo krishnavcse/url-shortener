@@ -34,7 +34,7 @@ class LoginController extends Controller
         
         $user['name']     = $request->name;
         $user['email']    = $request->email;
-        $user['password'] = $request->password;
+        $user['password'] = Hash::make($request->password);
 
         $checkIfAdminExist = User::whereRole('admin')->count();
 

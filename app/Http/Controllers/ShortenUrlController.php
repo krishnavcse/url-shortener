@@ -36,8 +36,11 @@ class ShortenUrlController extends Controller
 
             return $item;
         });
+
+        $urlLimit = $loggedInUser->url_limit;
+        $urlCount = UrlDetail::where('user_id', $loggedInUser->id)->count();
         
-        return view('url-shortener.index',compact('data'));
+        return view('url-shortener.index',compact('data', 'urlLimit', 'urlCount'));
     }
 
     /**
@@ -55,6 +58,12 @@ class ShortenUrlController extends Controller
                 'url'       => 'required|url',
                 'is_active' => 'required|in:active,deactive'
             ]);
+
+            $loggedInUser = Auth::user();
+            $urlCount = UrlDetail::where('user_id', $loggedInUser->id)->count();
+            if (($loggedInUser->url_limit <= $urlCount) && ($loggedInUser->url_limit != 'unlimited')) {
+                return redirect('short-urls')->with('insert', trans('lang.you_have_reached_your_url_limit'));
+            }
         }
 
         UrlDetail::updateOrCreate(['id' => $request->id], $data);
@@ -80,7 +89,12 @@ class ShortenUrlController extends Controller
      */
     public function create()
     {
-        
+        $loggedInUser = Auth::user();
+        $urlCount = UrlDetail::where('user_id', $loggedInUser->id)->count();
+        if (($loggedInUser->url_limit <= $urlCount) && ($loggedInUser->url_limit != 'unlimited')) {
+            return redirect('short-urls')->with('insert', trans('lang.you_have_reached_your_url_limit'));
+        }
+
         return view('url-shortener.create');
     }
 
