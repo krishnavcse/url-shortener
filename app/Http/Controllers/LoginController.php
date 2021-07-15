@@ -32,15 +32,17 @@ class LoginController extends Controller
             'password_confirmation' => 'required|min:7'
         ]);
         
-        $name     = $request->name;
-        $email    = $request->email;
-        $password = $request->password;
+        $user['name']     = $request->name;
+        $user['email']    = $request->email;
+        $user['password'] = $request->password;
 
-        User::create([
-            'name'     => $name,
-            'email'    => $email,
-            'password' => Hash::make($password),
-        ]);
+        $checkIfAdminExist = User::whereRole('admin')->count();
+
+        if (!$checkIfAdminExist) {
+            $user['role'] = 'admin';
+        }
+
+        User::create($user);
 
         return redirect('dashboard');
 
